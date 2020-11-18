@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ public class Register extends AppCompatActivity {
     boolean valid = true;
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
+    CheckBox isTeacherBox,isStudentBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,27 @@ public class Register extends AppCompatActivity {
         phone = findViewById(R.id.registerPhone);
         registerBtn = findViewById(R.id.registerBtn);
         goToLogin = findViewById(R.id.gotoLogin);
+        isTeacherBox = findViewById(R.id.isTeacher); // checkbox
+        isStudentBox = findViewById(R.id.isStudent);  // checkbox
+
+        // check to make sure only 1 box is checked
+        isStudentBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(compoundButton.isChecked()){
+                    isTeacherBox.setChecked(false);
+                }
+            }
+        });
+
+        isTeacherBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(compoundButton.isChecked()){
+                    isStudentBox.setChecked(false);
+                }
+            }
+        });
 
        registerBtn.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -50,6 +74,12 @@ public class Register extends AppCompatActivity {
                checkField(email);
                checkField(password);
                checkField(phone);
+
+               // checkbox validtion
+               if(!(isTeacherBox.isChecked() || isStudentBox.isChecked())){
+                   Toast.makeText(Register.this,"Select the Account Type",Toast.LENGTH_SHORT).show();
+                   return;
+               }
 
                if(valid){
                    fAuth.createUserWithEmailAndPassword(email.getText().toString(),password.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
@@ -63,12 +93,21 @@ public class Register extends AppCompatActivity {
                            userinfo.put("UserEmail",email.getText().toString());
                            userinfo.put("PhoneNumber",phone.getText().toString());
 
-                           // specify if user is admin
-                           userinfo.put("isUser","1");
+                           // specify if user is admin or user  -  1 is admin, 0 is user
+                           if(isTeacherBox.isChecked()){
+                               userinfo.put("isTeacher","1");
+                           }
+                           if(isStudentBox.isChecked()){
+                               userinfo.put("isStudent","1");
+                           }
                            df.set(userinfo);
 
-                           startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                           finish();
+                          if(isTeacherBox.isChecked()){
+                              startActivity(new Intent(getApplicationContext(),Admin.class));
+                          }
+                           if(isStudentBox.isChecked()){
+                               startActivity(new Intent(getApplicationContext(),User.class));
+                           }
                        }
                    }).addOnFailureListener(new OnFailureListener() {
                        @Override
@@ -100,5 +139,10 @@ public class Register extends AppCompatActivity {
         }
 
         return valid;
+    }
+
+    public void gotoHome(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }

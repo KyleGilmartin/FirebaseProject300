@@ -8,15 +8,15 @@ import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class Admin extends AppCompatActivity {
+public class User extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin);
+        setContentView(R.layout.activity_user);
     }
 
-    public void logoutAdmin(View view) {
+    public void logoutUser(View view) {
         FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(getApplicationContext(),Login.class));
         finish();
