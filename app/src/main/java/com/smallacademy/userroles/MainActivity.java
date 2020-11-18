@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
@@ -15,8 +16,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button logout = findViewById(R.id.logoutBtn);
-        logout.setOnClickListener(new View.OnClickListener() {
+//        Button logout = findViewById(R.id.logoutBtn);
+        FloatingActionButton login = findViewById(R.id.floatingActionButton);
+        login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FirebaseAuth.getInstance().signOut();
@@ -24,5 +26,9 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+
+    public void DoLogin(View view) {
     }
 }
